@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'dart:io' show Platform;
 import 'coin_data.dart';
 
 class PriceScreen extends StatefulWidget {
@@ -10,35 +10,61 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
 
+  String selectedCurrency = 'USD';
 
-  List<DropdownMenuItem> getDropDownItems(){
+  DropdownButton<String> androidButton(){
+
     List<DropdownMenuItem<String>> dropDownItems = [];
     for (String currency in currenciesList){
       var newItem = DropdownMenuItem(
-          child: Text(currency),
-          value: currency,
+        child: Text(currency),
+        value: currency,
       );
 
       dropDownItems.add(newItem);
     }
 
-    return dropDownItems;
+    return DropdownButton<String>(
+        value: selectedCurrency,
+        items: dropDownItems, onChanged: (value){
+        setState(() {
+        selectedCurrency = value;
+        print(selectedCurrency);
+});
+
+});
+
   }
 
-  List<Widget> getPickerItems(){
+
+  CupertinoPicker iOSPicker(){
 
     List<Text> pickerItems = [];
 
     for (String currency in currenciesList){
-      
+
       pickerItems.add(Text(currency));
     }
 
-    return pickerItems;
+    return CupertinoPicker(
+      backgroundColor: Colors.lightBlue,
+      itemExtent: 32.0, onSelectedItemChanged: (selectedIndex){
+      print(selectedIndex);
+    }, children:pickerItems,
+
+    );
 
   }
 
-  String selectedCurrency = 'USD';
+
+
+
+
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,13 +101,7 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: CupertinoPicker(
-                backgroundColor: Colors.lightBlue,
-                itemExtent: 32.0, onSelectedItemChanged: (selectedIndex){
-              print(selectedIndex);
-            }, children:getPickerItems(),
-
-            )
+            child: Platform.isIOS ? iOSPicker() : androidButton(),
           ),
         ],
       ),
@@ -90,12 +110,3 @@ class _PriceScreenState extends State<PriceScreen> {
 }
 
 
-//DropdownButton<String>(
-////value: selectedCurrency,
-////items: getdropDownItems(), onChanged: (value){
-////setState(() {
-////selectedCurrency = value;
-////print(selectedCurrency);
-////});
-////
-////}),
